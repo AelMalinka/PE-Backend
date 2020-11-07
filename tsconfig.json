@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"outDir": "./build",
+		"moduleResolution": "node",
+		"target": "es6",
+		"strictNullChecks": true
+	},
+	"ts-node": {
+		"compilerOptions": {
+			"module": "commonjs"
+		}
+	},
+	"exclude": ["node_modules"]
+}

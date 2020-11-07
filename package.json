@@ -1,0 +1,79 @@
+{
+  "name": "prominent-edge-backend-test",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "scripts": {
+    "start": "cross-env DEBUG=\"*,-nodemon*\" nodemon",
+    "test": "cross-env DEBUG=\"*,-nodemon*,-mocha*\" mocha --watch",
+    "test:lint": "eslint . --ext .js,.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AelMalinka/PE-Backend.git"
+  },
+  "author": "Michael Thomas <malinka@entropy-development.com> (malinka)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AelMalinka/PE-Backend/issues"
+  },
+  "homepage": "https://github.com/AelMalinka/PE-Backend#readme",
+  "nodemon": {
+    "watch": [
+      "**/*.ts"
+    ],
+    "ignore": [
+      "**/*.spec.ts",
+      "node_modules"
+    ],
+    "exec": "ts-node ./index.ts"
+  },
+  "mocha": {
+    "extension": [
+      "ts"
+    ],
+    "spec": "**/*.test.ts",
+    "require": [
+      "ts-node/register"
+    ]
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint",
+      "mocha",
+      "import"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:mocha/recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings",
+      "plugin:import/typescript"
+    ]
+  },
+  "dependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/koa": "^2.11.6",
+    "@types/koa-logger": "^3.1.1",
+    "@types/koa-router": "^7.4.1",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.14.6",
+    "@typescript-eslint/eslint-plugin": "^4.6.1",
+    "@typescript-eslint/parser": "^4.6.1",
+    "chai": "^4.2.0",
+    "cross-env": "^7.0.2",
+    "debug": "^4.2.0",
+    "eslint": "^7.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-mocha": "^8.0.0",
+    "koa": "^2.13.0",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^10.0.0",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.5"
+  }
+}
