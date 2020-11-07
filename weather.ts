@@ -11,7 +11,7 @@ export interface Station {
 	};
 	active: boolean;
 	distance: number;
-};
+}
 
 export interface Weather {
 	time: string;
@@ -27,9 +27,13 @@ export interface Weather {
 	pres: number;
 	tsun: number;
 	coco: number;
-};
+}
 
-const get = async (path: string): Promise<Object> => {
+export interface FilterFunction extends Function {
+	(a: {time: string, time_local?: string}): boolean;
+}
+
+const get = async (path: string): Promise<Record<string, unknown>> => {
 	return new Promise((resolve, reject) => {
 		https.get(`${config.api.url}/${path}`, {
 			headers: {
@@ -49,7 +53,7 @@ const get = async (path: string): Promise<Object> => {
 	});
 };
 
-export const split = (dtime: string, sep: string = 'T'): { date: string, time: string, tz?: string } => {
+export const split = (dtime: string, sep = 'T'): { date: string, time: string, tz?: string } => {
 	return {
 		date: dtime.split(sep)[0],
 		time: dtime.split(sep)[1].slice(0, 8),
@@ -57,7 +61,7 @@ export const split = (dtime: string, sep: string = 'T'): { date: string, time: s
 	}
 };
 
-export const filterHour = (dtime: string) => {
+export const filterHour = (dtime: string): FilterFunction => {
 	const hour = +split(dtime).time.split(':')[0];
 	return (a: {time: string, time_local?: string}) => {
 		const h = +split(a.time_local || a.time, ' ').time.split(':')[0];
@@ -67,7 +71,7 @@ export const filterHour = (dtime: string) => {
 
 export const station = async (lat: number, lon: number): Promise<Station> => {
 	const res = await get(`stations/nearby?lat=${lat}&lon=${lon}&limit=1`);
-	const ret: Station = res['data'][0];
+	const ret: Station = (res['data'] as Station[])[0];
 
 	debug(`found station ${ret.name.en} (${ret.id})`);
 
@@ -75,8 +79,8 @@ export const station = async (lat: number, lon: number): Promise<Station> => {
 };
 
 export const weather = async (station: string, dtime: string, rtz?: string): Promise<Weather[]> => {
-	const { date, time, tz } = split(dtime);
-	const tzstring = (tz?: string) => {
+	const { date, tz } = split(dtime);
+	const tzstring = (tz?: string): string => {
 		if(tz)
 			return `&tz=${tz}`;
 		else
@@ -84,7 +88,7 @@ export const weather = async (station: string, dtime: string, rtz?: string): Pro
 	};
 
 	const res = await get(`stations/hourly?station=${station}&start=${date}&end=${date}&model=1${tzstring(rtz || tz)}`);
-	const ret: Weather[] = res['data'].filter(filterHour(dtime));
+	const ret: Weather[] = (res['data'] as Weather[]).filter(filterHour(dtime));
 
 	debug(`found weather at ${ret[0].time_local || ret[0].time} and ${ret[1].time_local || ret[1].time}`);
 

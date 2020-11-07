@@ -37,4 +37,4 @@ Things I would have liked to spend time on given more time
 3. Improve Typescript types and interactions
 
 ## Time spent
-I spent approximately 5 hours on this project; most of that time was spent getting more comfortable with typescript and combining it with koa.js for the first time.
+I spent approximately 6 hours on this project; most of that time was spent getting more comfortable with typescript and combining it with koa.js for the first time.
