@@ -39,8 +39,10 @@ describe('Weather', function() {
 			expect(res.active).to.be.true;
 			expect(res.id).to.not.be.null;
 		});
+	});
 
-		it('should find weather in richmond at time', async function() {
+	describe('#weather', function() {
+		it('should find weather in richmond', async function() {
 			const stat = await station(lat, lon);
 			const res = await weather(stat.id, opened);
 
