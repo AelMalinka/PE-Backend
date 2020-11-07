@@ -7,7 +7,7 @@ Install node dependencies:
 npm ci
 ```
 
-Weather data requires a Meteostat [api key][https://auth.meteostat.net/] and to be set in .env file
+Weather data requires a Meteostat [api key](https://auth.meteostat.net/) and to be set in .env file
 
 Sample .env file:
 ```
@@ -33,7 +33,7 @@ npm start
 Things I would have liked to spend time on given more time
 
 1. Cache weather/station data
-2. [Deno][https://deno.land/]
+2. [Deno](https://deno.land/)
 3. Improve Typescript types and interactions
 
 ## Time spent
