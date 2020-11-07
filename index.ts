@@ -1,10 +1,10 @@
 import Debug from 'debug';
 import Server from './server'
+import config from './config';
 
-const port = 3000;
 const debug = Debug('Application');
 const server = new Server();
 
-server.listen(port, () => {
-	debug(`listening on ${port}`);
+server.listen(config.port, () => {
+	debug(`listening on ${config.port}`);
 });
