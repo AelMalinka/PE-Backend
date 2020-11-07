@@ -49,16 +49,14 @@ const get = async (path: string): Promise<Object> => {
 	});
 };
 
-// 2020-11-07 AMR FIXME: chokes on wrong sep w/ cryptic error
-export const split = (dtime: string, sep: string = 'T'): { date: string, time: string, tz: string } => {
+export const split = (dtime: string, sep: string = 'T'): { date: string, time: string, tz?: string } => {
 	return {
 		date: dtime.split(sep)[0],
-		time: dtime.split(sep)[1].split('-')[0],
-		tz: dtime.slice(19),
+		time: dtime.split(sep)[1].slice(0, 8),
+		tz: dtime.split(sep)[1].length > 8 ? dtime.slice(-6) : undefined,
 	}
 };
 
-// 2020-11-07 AMR FIXME: formatting assumptions and cryptix errors
 export const filterHour = (dtime: string) => {
 	const hour = +split(dtime).time.split(':')[0];
 	return (a: {time: string, time_local?: string}) => {
@@ -76,9 +74,16 @@ export const station = async (lat: number, lon: number): Promise<Station> => {
 	return ret;
 };
 
-export const weather = async (station: string, dtime: string): Promise<Weather[]> => {
+export const weather = async (station: string, dtime: string, rtz?: string): Promise<Weather[]> => {
 	const { date, time, tz } = split(dtime);
-	const res = await get(`stations/hourly?station=${station}&start=${date}&end=${date}&model=1&tz=${tz}`);
+	const tzstring = (tz?: string) => {
+		if(tz)
+			return `&tz=${tz}`;
+		else
+			return '';
+	};
+
+	const res = await get(`stations/hourly?station=${station}&start=${date}&end=${date}&model=1${tzstring(rtz || tz)}`);
 	const ret: Weather[] = res['data'].filter(filterHour(dtime));
 
 	debug(`found weather at ${ret[0].time_local || ret[0].time} and ${ret[1].time_local || ret[1].time}`);

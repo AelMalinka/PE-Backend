@@ -5,6 +5,7 @@ describe('Weather', function() {
 	const lat = 37.466513;
 	const lon = -77.428683;
 	const opened = '2017-05-15T20:32:38-04:00';
+	const tz = 'US/Eastern';
 
 	describe('#split', function() {
 		it('should get date, time and tz', function() {
@@ -42,13 +43,32 @@ describe('Weather', function() {
 	});
 
 	describe('#weather', function() {
-		it('should find weather in richmond', async function() {
+
+		it('should find weather in richmond with tz', async function() {
+			const stat = await station(lat, lon);
+			const res = await weather(stat.id, opened, tz);
+
+			expect(res).to.have.lengthOf(2);
+			expect(res[0].time_local).to.equal('2017-05-15 20:00:00');
+			expect(res[1].time_local).to.equal('2017-05-15 21:00:00');
+		});
+
+		it('should find weather in richmond with guessed tz', async function() {
 			const stat = await station(lat, lon);
 			const res = await weather(stat.id, opened);
 
 			expect(res).to.have.lengthOf(2);
 			expect(res[0].time_local).to.equal('2017-05-15 20:00:00');
 			expect(res[1].time_local).to.equal('2017-05-15 21:00:00');
+		});
+
+		it('should find weather in richmond with no tz', async function() {
+			const stat = await station(lat, lon);
+			const res = await weather(stat.id, opened.slice(0, -6));
+
+			expect(res).to.have.lengthOf(2);
+			expect(res[0].time).to.equal('2017-05-15 20:00:00');
+			expect(res[1].time).to.equal('2017-05-15 21:00:00');
 		});
 	});
 });
