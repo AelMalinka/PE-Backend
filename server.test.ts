@@ -1,4 +1,4 @@
-import Server from './server';
+import Server, { Request } from './server';
 import config from './config';
 import { expect } from 'chai';
 import * as http from 'http';
@@ -10,6 +10,10 @@ describe('Server', function() {
 	}
 
 	let server: Server | null = null;
+	const lat = 37.541885;
+	const lon = -77.440624;
+	const opened = '2017-05-15T13:19:12-04:00';
+	const tz = 'US/Eastern';
 
 	beforeEach(function() {
 		server = new Server();
@@ -18,21 +22,31 @@ describe('Server', function() {
 		server?.close();
 	});
 
-	async function get(page: string): Promise<Response> {
+	async function put(page: string, req: Request): Promise<Response> {
 		return new Promise((resolve, reject) => {
-			http.get(`http://localhost:${config.test_port}${page}`, (res) => {
+			const request = http.request(`http://localhost:${config.test_port}${page}`, {
+				headers: {
+					'content-type': 'application/json',
+				},
+				method: 'POST',
+			}, (res) => {
 				let body = '';
-				res.on('data', (chunk: Buffer | string) => {
+
+				res.on('data', (chunk) => {
 					body += chunk.toString();
 				}).on('end', () => {
 					if(res.headers['content-type']?.startsWith('application/json'))
 						resolve(JSON.parse(body));
 					else
 						reject('invalid res type');
-				}).on('error', (e) => {
-					reject(e);
+				}).on('error', (err) => {
+					reject(err);
 				});
 			});
+
+			request.on('error', (err) => {
+				reject(err);
+			}).end(JSON.stringify(req));
 		});
 	}
 
@@ -53,9 +67,20 @@ describe('Server', function() {
 	describe('Routes', function() {
 		it('should respond respond to GET on /', async function() {
 			await listen(server);
-			const res = await get('/');
+			const res = await put('/', {
+				address: {
+					latitude: lat,
+					longitude: lon,
+				},
+				description: {
+					event_opened: opened,
+				},
+				fire_department: {
+					timezone: tz,
+				},
+			});
+
 			expect(res.res).to.not.be.null;
-			expect(res.res).to.equal('Hello!');
 		});
 	});
 });
