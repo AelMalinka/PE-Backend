@@ -1,4 +1,5 @@
-import Server from './server'
+import Server from './server';
+import config from './config';
 import { expect } from 'chai';
 import * as http from 'http';
 
@@ -8,8 +9,6 @@ describe('Server', function() {
 		res?: string;
 	}
 
-	// 2020-11-06 AMR FIXME: settable
-	const port = 4001;
 	let server: Server | null = null;
 
 	beforeEach(function() {
@@ -21,7 +20,7 @@ describe('Server', function() {
 
 	async function get(page: string): Promise<Response> {
 		return new Promise((resolve, reject) => {
-			http.get(`http://localhost:${port}${page}`, (res) => {
+			http.get(`http://localhost:${config.test_port}${page}`, (res) => {
 				let body = '';
 				res.on('data', (chunk: Buffer | string) => {
 					body += chunk.toString();
@@ -39,7 +38,7 @@ describe('Server', function() {
 
 	async function listen(server: Server | null): Promise<void> {
 		return new Promise((resolve) => {
-			server?.listen(port, () => {
+			server?.listen(config.test_port, () => {
 				resolve();
 			});
 		});
