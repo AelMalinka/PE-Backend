@@ -16,6 +16,7 @@ describe('Server', function() {
 	const tz = 'US/Eastern';
 
 	beforeEach(function() {
+		this.timeout(10000);
 		server = new Server();
 	});
 	afterEach(function() {

@@ -7,6 +7,10 @@ describe('Weather', function() {
 	const opened = '2017-05-15T20:32:38-04:00';
 	const tz = 'US/Eastern';
 
+	beforeEach(function() {
+		this.timeout(10000);
+	});
+
 	describe('#split', function() {
 		it('should get date, time and tz', function() {
 			const { date, time, tz } = split(opened);
